@@ -58,14 +58,16 @@ SCRIPT
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "debian-8" do |debian|
        debian.vm.box = "debian/jessie64"
-       debian.vm.synced_folder ".", "/vagrant", type: "rsync"
+       debian.vm.synced_folder "../ovs", "/vagrant/ovs", type: "rsync"
+       debian.vm.synced_folder ".", "/vagrant/ovn", type: "rsync"
        debian.vm.provision "bootstrap_ovs", type: "shell", inline: $bootstrap_ovs_debian
        debian.vm.provision "configure_ovs", type: "shell", inline: $configure_ovs
        debian.vm.provision "build_ovs", type: "shell", inline: $build_ovs
   end
   config.vm.define "fedora-23" do |fedora|
        fedora.vm.box = "fedora/23-cloud-base"
-       fedora.vm.synced_folder ".", "/vagrant", type: "rsync"
+       fedora.vm.synced_folder "../ovs", "/vagrant/ovs", type: "rsync"
+       fedora.vm.synced_folder ".", "/vagrant/ovn", type: "rsync"
        fedora.vm.provision "bootstrap_ovs", type: "shell", inline: $bootstrap_ovs_fedora
        fedora.vm.provision "configure_ovs", type: "shell", inline: $configure_ovs
        fedora.vm.provision "build_ovs", type: "shell", inline: $build_ovs
