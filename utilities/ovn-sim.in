@@ -267,7 +267,8 @@ EOF
         -- set Open_vSwitch . external-ids:ovn-encap-ip=$ip\
         -- add-br br-int \
         -- set bridge br-int fail-mode=secure other-config:disable-in-band=true
-    ovn-controller --detach --no-chdir --pidfile -vconsole:off -vsyslog:off --log-file
+    ovn-controller --detach --no-chdir --pidfile -vconsole:off -vsyslog:off --log-file \
+                   --unixctl=cntrl.$sandbox
 }
 export -f ovn_attach
 
