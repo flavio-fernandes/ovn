@@ -217,15 +217,22 @@ EOF
         return 1
     fi
 
+    # TODO REMOVE THIS!
+    set -x
     ovn_start_db nb "$nbdb_model" "$nbdb_servers" "$ovn_sim_srcdir"/ovn-nb.ovsschema
     ovn_start_db sb "$sbdb_model" "$sbdb_servers" "$ovn_sim_srcdir"/ovn-sb.ovsschema
 
     ovn-nbctl init
     ovn-sbctl init
 
+    daemon_opts="--detach --no-chdir --pidfile -vconsole:off -vsyslog:off --log-file"
+
     mkdir "$sim_base"/northd
     as northd ovn-northd --ovnnb-db="$OVN_NB_DB" --ovnsb-db="$OVN_SB_DB" \
-       $daemon_opts
+       $daemon_opts --unixctl=north
+
+    # TODO REMOVE THIS!
+    set +x
 }
 export -f ovn_start
 
@@ -273,3 +280,5 @@ ovn_man_pages() {
 }
 export -f ovn_man_pages
 
+# TODO FIX THIS!
+source ~/work/ovs.git/utilities/ovs-sim
