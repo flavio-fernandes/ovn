@@ -297,5 +297,24 @@ ovn_man_pages() {
 }
 export -f ovn_man_pages
 
-# TODO FIX THIS!
+#### TODO FIX THIS ISSUE!
+ovs_builddir = @ovs_builddir@
+ovs_srcdir = @ovs_srcdir@
+ovsdb_libdir = @ovsdb_libdir@
+OVS_BUILDDIR = @OVS_BUILDDIR@
+OVS_SRCDIR = @OVS_SRCDIR@
+OVSDB_LIBDIR = @OVSDB_LIBDIR@
+
+OVS_BUILDDIR = @OVS_BUILD_DIR@
+OVS_SRCDIR = @OVS_SRC_DIR@
+OVSDB_LIBDIR = @OVSDB_LIB_DIR@
+RUNDIR = @RUNDIR@
+
+OVS_RUNDIR = @OVS_RUNDIR@
+OVSBUILDDIR = @OVSBUILDDIR@
+
+## source ${OVSBUILDDIR}/utilities/ovs-sim
+
+# YUCK!
+OVN_RUNDIR = @OVN_RUNDIR@
 source ~/work/ovs.git/utilities/ovs-sim
