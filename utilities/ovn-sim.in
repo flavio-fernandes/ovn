@@ -258,6 +258,9 @@ EOF
     local net=$1 bridge=$2 ip=$3 masklen=${4-24}
     net_attach $net $bridge || return $?
 
+    # TODO REMOVE THIS!
+    set -x
+    
     ovs-appctl netdev-dummy/ip4addr $bridge $ip/$masklen >/dev/null
     ovs-appctl ovs/route/add $ip/$masklen $bridge > /dev/null
     ovs-vsctl \
@@ -267,8 +270,14 @@ EOF
         -- set Open_vSwitch . external-ids:ovn-encap-ip=$ip\
         -- add-br br-int \
         -- set bridge br-int fail-mode=secure other-config:disable-in-band=true
-    ovn-controller --detach --no-chdir --pidfile -vconsole:off -vsyslog:off --log-file \
-                   --unixctl=cntrl.$sandbox
+    ovn-controller --detach --no-chdir -vsyslog:off -vconsole:off \
+                   --log-file=ovn-controller.${sandbox}.log \
+                   --pidfile=ovn-controller.${sandbox}.pid 
+
+    ### --unixctl=cntrl.$sandbox
+
+    # TODO REMOVE THIS!
+    set +x
 }
 export -f ovn_attach
 
