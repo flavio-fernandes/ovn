@@ -222,10 +222,6 @@ EOF
     # Build ovn man pages as part of ovn_start
     ovn_man_pages
 
-
-    # TODO REMOVE THIS!
-    set -x
-
     ovn_start_db nb "$nbdb_model" "$nbdb_servers" "$ovn_sim_srcdir"/ovn-nb.ovsschema
     ovn_start_db sb "$sbdb_model" "$sbdb_servers" "$ovn_sim_srcdir"/ovn-sb.ovsschema
 
@@ -236,10 +232,6 @@ EOF
     as northd ovn-northd --detach --no-chdir --pidfile=ovn-northd.pid -vconsole:off \
        --log-file=ovn-northd.log -vsyslog:off \
        --ovnnb-db="$OVN_NB_DB" --ovnsb-db="$OVN_SB_DB" \
-
-    ## --unixctl=north
-    # TODO REMOVE THIS!
-    set +x
 }
 export -f ovn_start
 
@@ -265,9 +257,6 @@ EOF
     local net=$1 bridge=$2 ip=$3 masklen=${4-24}
     net_attach $net $bridge || return $?
 
-    # TODO REMOVE THIS!
-    set -x
-
     ovn_sim_setvars $sandbox
     
     ovs-appctl netdev-dummy/ip4addr $bridge $ip/$masklen >/dev/null
@@ -282,10 +271,6 @@ EOF
     ovn-controller --detach --no-chdir -vsyslog:off -vconsole:off \
                    --log-file=ovn-controller.${sandbox}.log \
                    --pidfile=ovn-controller.${sandbox}.pid 
-
-    ### --unixctl=cntrl.$sandbox
-    # TODO REMOVE THIS!
-    set +x
 }
 export -f ovn_attach
 
