@@ -225,11 +225,11 @@ EOF
     ovn-nbctl init
     ovn-sbctl init
 
-    daemon_opts="--detach --no-chdir --pidfile -vconsole:off -vsyslog:off --log-file"
-
     mkdir "$sim_base"/northd
-    as northd ovn-northd --ovnnb-db="$OVN_NB_DB" --ovnsb-db="$OVN_SB_DB" \
-       $daemon_opts --unixctl=north
+    as northd ovn-northd --detach --no-chdir --pidfile=ovn-northd.pid -vconsole:off \
+       --log-file=ovn-northd.log -vsyslog:off \
+       --ovnnb-db="$OVN_NB_DB" --ovnsb-db="$OVN_SB_DB" \
+       --unixctl=north
 
     # TODO REMOVE THIS!
     set +x
