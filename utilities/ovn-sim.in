@@ -18,6 +18,10 @@ set -e
 
 ovn_sim_builddir='@abs_builddir@'; export ovn_sim_builddir
 ovn_sim_srcdir='@abs_top_srcdir@'; export ovn_sim_srcdir
+a='@ovs_builddir@'
+b='@ovs_srcdir@'
+c='@ovs_libdir@'
+d='@OVSDIR@'
 
 # Check that we've got proper builddir and srcdir.
 if test ! -e "$ovn_sim_builddir"/northd/ovn-northd; then
