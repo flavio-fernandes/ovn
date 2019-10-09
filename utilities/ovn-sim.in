@@ -217,8 +217,15 @@ EOF
         return 1
     fi
 
+    ovn_sim_setvars $sandbox
+
+    # Build ovn man pages as part of ovn_start
+    ovn_man_pages
+
+
     # TODO REMOVE THIS!
     set -x
+
     ovn_start_db nb "$nbdb_model" "$nbdb_servers" "$ovn_sim_srcdir"/ovn-nb.ovsschema
     ovn_start_db sb "$sbdb_model" "$sbdb_servers" "$ovn_sim_srcdir"/ovn-sb.ovsschema
 
@@ -229,8 +236,8 @@ EOF
     as northd ovn-northd --detach --no-chdir --pidfile=ovn-northd.pid -vconsole:off \
        --log-file=ovn-northd.log -vsyslog:off \
        --ovnnb-db="$OVN_NB_DB" --ovnsb-db="$OVN_SB_DB" \
-       --unixctl=north
 
+    ## --unixctl=north
     # TODO REMOVE THIS!
     set +x
 }
@@ -260,6 +267,8 @@ EOF
 
     # TODO REMOVE THIS!
     set -x
+
+    ovn_sim_setvars $sandbox
     
     ovs-appctl netdev-dummy/ip4addr $bridge $ip/$masklen >/dev/null
     ovs-appctl ovs/route/add $ip/$masklen $bridge > /dev/null
@@ -275,11 +284,24 @@ EOF
                    --pidfile=ovn-controller.${sandbox}.pid 
 
     ### --unixctl=cntrl.$sandbox
-
     # TODO REMOVE THIS!
     set +x
 }
 export -f ovn_attach
+
+ovn_sim_setvars() {
+    OVN_RUNDIR=$sim_base/$1; export OVN_RUNDIR
+    OVN_LOGDIR=$sim_base/$1; export OVN_LOGDIR
+    OVN_DBDIR=$sim_base/$1; export OVN_DBDIR
+    OVN_SYSCONFDIR=$sim_base/$1; export OVN_SYSCONFDIR
+}
+export -f ovn_sim_setvars
+
+ovn_as() {
+    ovn_sim_setvars $1
+    as $@
+}
+export -f ovn_as
 
 ovn_man_pages() {
     # Easy access to OVN manpages.
