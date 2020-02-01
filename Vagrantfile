@@ -16,7 +16,7 @@ until [ $cnt -ge 3 ] ; do
                python3-twisted python3-zope-interface python3-six \
                desktop-file-utils groff graphviz rpmdevtools nc curl \
                wget pyftpdlib checkpolicy selinux-policy-devel \
-               libcap-ng-devel kernel-devel-`uname -r` ethtool python-tftpy \
+               libcap-ng-devel ethtool python-tftpy \
                lftp
    if [ "$?" -eq 0 ]; then break ; fi
    (( cnt++ ))
@@ -42,7 +42,7 @@ yum -y install autoconf automake openssl-devel libtool \
                python3-devel python3-twisted-core python3-zope-interface \
                desktop-file-utils groff graphviz rpmdevtools nc curl \
                wget python-six pyftpdlib checkpolicy selinux-policy-devel \
-               libcap-ng-devel kernel-devel-`uname -r` ethtool net-tools \
+               libcap-ng-devel ethtool net-tools \
                lftp
 pip3 install six
 SCRIPT
@@ -53,7 +53,7 @@ dnf -y install autoconf automake openssl-devel libtool \
                python3-devel python3-pip \
                desktop-file-utils graphviz rpmdevtools nc curl \
                wget checkpolicy selinux-policy-devel \
-               libcap-ng-devel kernel-devel-`uname -r` ethtool \
+               libcap-ng-devel ethtool \
                lftp
 echo "search extra update built-in" >/etc/depmod.d/search_path.conf
 pip3 install pyftpdlib tftpy twisted zope-interface six
