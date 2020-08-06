@@ -5590,7 +5590,7 @@ build_acls(struct ovn_datapath *od, struct hmap *lflows,
             if (server_id && server_mac && lease_time) {
                 struct ds match = DS_EMPTY_INITIALIZER;
                 const char *actions =
-                    has_stateful ? "ct_commit; next;" : "next;";
+                    has_stateful ? "ct_commit { }; next;" : "next;";
                 ds_put_format(&match, "outport == \"%s\" && eth.src == %s "
                               "&& ip4.src == %s && udp && udp.src == 67 "
                               "&& udp.dst == 68", od->nbs->ports[i]->name,
@@ -5616,7 +5616,7 @@ build_acls(struct ovn_datapath *od, struct hmap *lflows,
                 ipv6_string_mapped(server_ip, &lla);
 
                 struct ds match = DS_EMPTY_INITIALIZER;
-                const char *actions = has_stateful ? "ct_commit; next;" :
+                const char *actions = has_stateful ? "ct_commit { }; next;" :
                     "next;";
                 ds_put_format(&match, "outport == \"%s\" && eth.src == %s "
                               "&& ip6.src == %s && udp && udp.src == 547 "
@@ -5634,7 +5634,7 @@ build_acls(struct ovn_datapath *od, struct hmap *lflows,
      * if the CMS has configured DNS records for the datapath.
      */
     if (ls_has_dns_records(od->nbs)) {
-        const char *actions = has_stateful ? "ct_commit; next;" : "next;";
+        const char *actions = has_stateful ? "ct_commit { }; next;" : "next;";
         ovn_lflow_add(
             lflows, od, S_SWITCH_OUT_ACL, 34000, "udp.src == 53",
             actions);
