@@ -1768,6 +1768,20 @@
             default, log messages are not rate-limited.
         </p>
       </column>
+
+      <column name="unique_meter">
+        <p>
+            This column is used to further describe the desired behavior
+            of the meter for the log events from the ACL. If this column
+            is empty or is set to <code>false</code>, the rate will be
+            shared across all ACLs that refer to the same Meter
+            <ref column="name" table="meter"/>. When this column is set
+            to <code>true</code>, log messages for this ACL row will be
+            rate-limited on its own. So, setting this to <code>true</code>
+            will ensure that logs are not missed due to another ACL log
+            using the same meter, and that occurs more frequently.
+        </p>
+      </column>
     </group>
 
     <group title="Common Columns">

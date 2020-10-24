@@ -5421,7 +5421,18 @@ build_acl_log(struct ds *actions, const struct nbrec_acl *acl)
     }
 
     if (acl->meter) {
-        ds_put_format(actions, "meter=\"%s\", ", acl->meter);
+        if (!acl->unique_meter || *acl->unique_meter == false) {
+            ds_put_format(actions, "meter=\"%s\", ", acl->meter);
+        } else {
+            // TODO(flaviof): Implement logic for allocating unique Meter in the SB
+            // for the given acl. That is so because meter rate-limiting will not
+            // be affected by any other acl that uses the same name. An approach for
+            // deciding what name to use may be to append the acl's uuid to
+            // the meter name. And let's not forget to create a corresponding row
+            // in the SB Meters' table! ;)
+            //
+            // ds_put_format(actions, "meter=\"%s\", ", acl_unique_meter_name);
+        }
     }
 
     ds_chomp(actions, ' ');
