@@ -8,6 +8,8 @@ Post-v20.09.0
      server.
    - Support other_config:vlan-passthru=true to allow VLAN tagged incoming
      traffic.
+   - Add "fair" column to Meter tables to allow multiple ACL logs to reliably
+     use the same Meter.
 
 OVN v20.09.0 - 28 Sep 2020
 --------------------------
