@@ -10,6 +10,8 @@ Post-v20.09.0
      traffic.
    - Propagate currently processed SB_Global.nb_cfg in ovn-controller to the
      local OVS DB integration bridge external_ids:ovn-nb-cfg.
+   - Add "fair" column in Meter table to allow multiple ACL logs to use the
+     same Meter while being rate-limited independently.
 
 OVN v20.09.0 - 28 Sep 2020
 --------------------------
