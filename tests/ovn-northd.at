@@ -1920,6 +1920,7 @@ sw1flows3:  table=5 (ls_out_acl         ), priority=2003 , match=((reg0[[9]] == 
 AT_CLEANUP
 ])
 
+OVN_FOR_EACH_NORTHD([
 AT_SETUP([ovn-northd -- ACL fair Meters])
 AT_KEYWORDS([acl log meter fair])
 ovn_start
@@ -2016,6 +2017,7 @@ check_meter_by_name meter_me
 check_meter_by_name NOT meter_me__${acl1} meter_me__${acl2}
 
 AT_CLEANUP
+])
 
 OVN_FOR_EACH_NORTHD([
 AT_SETUP([datapath requested-tnl-key])
