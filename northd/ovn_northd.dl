@@ -27,17 +27,17 @@ output relation Warning[string]
 
 index Logical_Flow_Index() on sb::Out_Logical_Flow()
 
-/* Single-row relation that contains the set of shared meters. */
-relation AclSharedLogMeters[Set<string>]
-AclSharedLogMeters[meters] :- AclSharedLogMeters0[meters].
-AclSharedLogMeters[set_empty()] :-
+/* Single-row relation that contains the set of meters marked as fair. */
+relation AclFairLogMeters[Set<string>]
+AclFairLogMeters[meters] :- AclFairLogMeters0[meters].
+AclFairLogMeters[set_empty()] :-
     Unit(),
-    not AclSharedLogMeters0[_].
+    not AclFairLogMeters0[_].
 
-relation AclSharedLogMeters0[Set<string>]
-AclSharedLogMeters0[meters] :-
+relation AclFairLogMeters0[Set<string>]
+AclFairLogMeters0[meters] :-
     nb in nb::NB_Global(),
-    Some{var s} = nb.options.get("acl_shared_log_meters"),
+    Some{var s} = nb.options.get("XXXacl_shared_log_meters"),
     var meters = s.split(",").to_set().
 
 /* Meter_Band table */
@@ -59,7 +59,7 @@ sb::Out_Meter(._uuid = hash128(meter_uuid ++ acl_uuid),
               .name = "${name}__${uuid2str(acl_uuid)}",
               .unit = unit,
               .bands = bands) :-
-    AclSharedLogMeters[names],
+    AclFairLogMeters[names],
     var name = FlatMap(names),
     nb::Meter(._uuid = meter_uuid, .name = name, .unit = unit, .bands = bands),
     nb::ACL(._uuid = acl_uuid, .meter = Some{name}).
@@ -2038,7 +2038,7 @@ for (&Switch(.ls = ls)) {
          .external_ids     = map_empty())
 }
 
-function build_acl_log(acl: nb::ACL, shared_meters: Set<string>): string =
+function build_acl_log(acl: nb::ACL, fair_meters: Set<string>): string =
 {
     if (not acl.log) {
         ""
@@ -2071,7 +2071,7 @@ function build_acl_log(acl: nb::ACL, shared_meters: Set<string>): string =
         match (acl.meter) {
             None -> (),
             Some{meter} -> {
-                var s = if (shared_meters.contains(meter)) {
+                var s = if (fair_meters.contains(meter)) {
                     "${meter}__${uuid2str(acl._uuid)}"
                 } else {
                     meter
@@ -2095,7 +2095,7 @@ function oVN_ACL_PRI_OFFSET(): integer = 1000
 relation Reject(lsuuid: uuid, pipeline: string, stage: Stage, acl: nb::ACL, extra_match: string, extra_actions: string)
 
 /* build_reject_acl_rules() */
-for (AclSharedLogMeters[shared_meters]) {
+for (AclFairLogMeters[fair_meters]) {
     for (Reject(lsuuid, pipeline, stage, acl, extra_match_, extra_actions_)) {
         var extra_match = match (extra_match_) {
             "" -> "",
@@ -2109,7 +2109,7 @@ for (AclSharedLogMeters[shared_meters]) {
             true  -> "next(pipeline=egress,table=${stage_id(switch_stage(OUT, QOS_MARK)).0})",
             false -> "next(pipeline=ingress,table=${stage_id(switch_stage(IN, L2_LKUP)).0})"
         } in
-        var acl_log = build_acl_log(acl, shared_meters) in {
+        var acl_log = build_acl_log(acl, fair_meters) in {
             var __match = extra_match ++ acl.__match in
             var actions = acl_log ++ extra_actions ++ "reg0 = 0; "
                           "reject { "
@@ -2377,14 +2377,14 @@ for (&Switch(.ls = ls)) {
 }
 
 /* Ingress or Egress ACL Table (Various priorities). */
-for (AclSharedLogMeters[shared_meters]) {
+for (AclFairLogMeters[fair_meters]) {
     for (&SwitchACL(.sw = &Switch{.ls = ls, .has_stateful_acl = has_stateful}, .acl = &acl)) {
         /* consider_acl */
         var ingress = acl.direction == "from-lport" in
         var stage = if (ingress) { switch_stage(IN, ACL) } else { switch_stage(OUT, ACL) } in
         var pipeline = if ingress "ingress" else "egress" in
         var stage_hint = stage_hint(acl._uuid) in
-        var log_acl = build_acl_log(acl, shared_meters) in
+        var log_acl = build_acl_log(acl, fair_meters) in
         if (acl.action == "allow" or acl.action == "allow-related") {
             /* If there are any stateful flows, we must even commit "allow"
              * actions.  This is because, while the initiater's
