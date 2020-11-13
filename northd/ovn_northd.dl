@@ -34,28 +34,15 @@ AclFairLogMeters[set_empty()] :-
     Unit(),
     not AclFairLogMeters0[_].
 
-/* relation AclFairLogMeters0[Set<string>]
- * AclFairLogMeters0[meters] :-
- *   nb in nb::NB_Global(),
- *   Some{var s} = nb.options.get("XXXacl_shared_log_meters"),
- *   var meters = s.split(",").to_set().
- */
-
-/*
- *  meter in nb::Meter(.name = name, .fair = Some{fair}),
- *   fair == true,
- */
-     
 relation AclFairLogMeters0[Set<string>]
 AclFairLogMeters0[meters] :-
-    meter in nb::Meter(.name = name, .fair = Some{fair}),
-    fair == true,
+    meter in nb::Meter(.fair = Some{fair}),
+    fair,
     var meters = {
         var meters = set_empty();
         set_insert(meters, meter.name);
         meters
     }.
-
 
 /* Meter_Band table */
 for (mb in nb::Meter_Band) {
